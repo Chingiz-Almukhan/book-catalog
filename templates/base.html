@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+    {% endblock %}
+
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" crossorigin="anonymous"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'main.css' %}"/>
+
+
+</head>
+<body>
+{% csrf_token %}
+{% load django_bootstrap5 %}
+
+
+{% include "partial/nav.html" %}
+<span class="container"></span>
+<div class="container mt-5 mb-5">
+    {% block container %}
+    {% endblock %}
+</div>
+<div class="modal fade" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registrationModalLabel">Регистрация</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="registration-form" method="post">
+                    {% csrf_token %}
+                    <label class="reg-form" for="email">Электронная почта:</label>
+                    <input type="email" name="email" id="email" required><br><br>
+
+                    <label class="reg-form" for="username">Имя пользователя:</label>
+                    <input type="text" name="username" required><br><br>
+
+                    <label class="reg-form" for="password">Пароль:</label>
+                    <input type="password" name="password" id="password" required><br><br>
+
+                    <label class="reg-form" for="password2">Подтвердите пароль:</label>
+                    <input type="password" name="password2" required><br><br>
+
+                    <button type="button" class="btn btn-primary" id="registration-button">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Вход</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="login-form" method="post">
+                    {% csrf_token %}
+                    <label class="reg-form" for="email">Электронная почта:</label>
+                    <input type="email" name="email" id="email_login" required><br><br>
+                    <label class="reg-form" for="password">Пароль:</label>
+                    <input type="password" name="password" id="password_login" required><br><br>
+                    <button type="button" class="btn btn-primary" id="login-button">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="genreModal" tabindex="-1" role="dialog" aria-labelledby="genreModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="genreModalLabel">Фильтрация по жанрам</h5>
+                <button type="button" class="btn-close" id="genre-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <form id="genre-form" >
+                    <label class="reg-form" for="email">Введите жанр:</label>
+                    <input type="text" name="genre" id="genre-input" required><br><br>
+                    <button type="button" class="btn btn-primary" id="genre-button">Фильтровать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="authorModal" tabindex="-1" role="dialog" aria-labelledby="authorModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="authorModalLabel">Фильтрация по авторам</h5>
+                <button type="button" class="btn-close" id="author-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <form id="author-form" >
+                    <label class="author-form" for="author">Введите имя автора:</label>
+                    <input type="text" name="author" id="author-input" required><br><br>
+                    <button type="button" class="btn btn-primary" id="author-button">Фильтровать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="publishModal" tabindex="-1" role="dialog" aria-labelledby="publishModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="publishModalLabel">Фильтрация по авторам</h5>
+                <button type="button" class="btn-close" id="publish-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <form id="publish-form">
+                    <label class="date-form" for="date-min">Выберете начало диапозона поиска:</label>
+                    <input type="date" name="date-min" id="date-min-input" required><br><br>
+                    <label class="date-form" for="date-max">Выберете конец диапазона поиска</label>
+                    <input type="date" name="date-max" id="date-max-input" required><br><br>
+                    <button type="button" class="btn btn-primary" id="date-button">Фильтровать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script>
+    function getAccessToken() {
+        return localStorage.getItem('access_token');
+    }
+
+    function getRefreshToken() {
+        return localStorage.getItem('refresh_token');
+    }
+
+    function refreshToken() {
+        const refresh_token = getRefreshToken();
+
+        if (refresh_token) {
+            $.ajax({
+                url: '/api/token/refresh/',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    'refresh': refresh_token
+                },
+                success: function (data) {
+                    const new_access_token = data.access;
+                    localStorage.setItem('access_token', new_access_token);
+                },
+                error: function (error) {
+                    console.error('Error refreshing token:', error);
+                }
+            });
+        } else {
+            clearTokens();
+        }
+    }
+
+    function clearTokens() {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+    }
+
+    function isAccessTokenValid() {
+        const access_token = getAccessToken();
+        if (!access_token) {
+            return false;
+        }
+
+        const token_data = parseJwt(access_token);
+        const now = Math.floor(Date.now() / 1000);
+
+        return token_data.exp > now;
+    }
+
+    function parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    }
+
+    $(document).ready(function () {
+        if (!isAccessTokenValid()) {
+            refreshToken();
+            $('#login').show();
+            $('#register').show();
+            $('#logout').hide();
+        } else {
+            $('#login').hide();
+            $('#register').hide();
+            $('#logout').show();
+        }
+        $('#logout').click(function () {
+            clearTokens();
+        })
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        $('#registration-button').click(function () {
+
+            const email = $('#email').val();
+            const password = $('#password').val();
+            const form = $('#registration-form');
+            const formData = form.serialize();
+
+            $.ajax({
+                url: '/auth/register/',
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function (data) {
+                    getToken(email, password)
+                },
+                error: function (error) {
+                    console.error('AJAX Error:', error);
+                }
+            });
+        });
+        $('#login-button').click(function () {
+            const email = $('#email_login').val();
+            const password = $('#password_login').val();
+            getToken(email, password)
+        })
+
+    });
+
+    function getToken(userEmail, userPassword) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `/api/token/`,
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    "email": userEmail,
+                    "password": userPassword
+                },
+                success: function (data) {
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+                    resolve();
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('AJAX Error:', error);
+                    reject('');
+                }
+            });
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        function defaultAction() {
+            const baseURL = `/books/`;
+	        $.ajax({
+	            url: baseURL,
+	            method: 'GET',
+	            dataType: 'json',
+	            success: function (data) {
+	                updateContainerWithBooks(data);
+	            },
+	            error: function (error) {
+	                console.error('AJAX Error:', error);
+	            }
+        });
+        };
+        defaultAction();
+		$('#logo-name').click(function (){
+			defaultAction();
+        })
+        $("#main-page").click(function () {
+            defaultAction();
+        })
+        const currentUser = localStorage.getItem('access_token');
+
+
+        function getBookCard(data, bookId, author, genre, isDetail, reviews) {
+
+            const reviewButton = currentUser ?
+						        `<button class="btn btn-primary mt-3 mb-2 leave_review" data-book-id="${bookId}">Оставить отзыв</button>` :
+						        '';
+
+            const showReviews = `<button class="btn btn-primary mt-3 mb-2 show_review" data-book-id="${bookId}">Показать отзывы</button>`
+	        return isDetail ?
+	        `
+	            <div class="card mt-2 col-lg-6 offset-3">
+	                <div class="card-header text-center" id="book-${bookId}" style="background-color: white">
+	                    <div class="media pt-3 pl-3 pb-1">
+	                        <div class="media-body">
+	                            <p style="margin-top: 5px;" data-book-id="${bookId}" >Название: <b>${data.title}</b></p>
+	                        </div>
+	                        <div class="media-body">
+	                            <p style="margin-top: 5px;">Автор: <b>${author}</b></p>
+	                        </div>
+	                        <div class="media-body">
+	                            <p style="margin-top: 5px;">Жанр: <b>${genre}</b></p>
+	                        </div>
+							<div class="media-body">
+	                            <p style="margin-top: 5px;">Описание: <b>${data.description}</b></p>
+	                        </div>
+							<div class="media-body">
+	                            <p style="margin-top: 5px;">Дата публикации: <b>${data.publication_date}</b></p>
+	                        </div>
+							<div class="media-body">
+								<p style="margin-top: 5px;">Средняя оценка: <b>${data.average_rating}</b></p>
+
+							</div>
+	                    </div>
+						<div class="card-body text-center" id="review-form-container-${bookId}" >
+					        ${reviewButton}
+							${showReviews}
+					    </div>
+					    <div class="card-footer" id="review-list-container-${bookId}">
+
+					    </div>
+
+	                </div>
+	            </div>`
+	        :   `
+	            <div class="card mt-2 col-lg-6 offset-3">
+	                <div class="card-header text-center" id="book-${bookId}" style="background-color: white">
+	                    <div class="media pt-3 pl-3 pb-1">
+	                        <div class="media-body">
+	                            <p style="margin-top: 5px;" data-book-id="${bookId}" >Название: <b>${data.title}</b></p>
+	                        </div>
+	                        <div class="media-body">
+	                            <p style="margin-top: 5px;">Автор: <b>${author}</b></p>
+	                        </div>
+	                        <div class="media-body">
+	                            <p style="margin-top: 5px;">Жанр: <b>${genre}</b></p>
+	                        </div>
+							<div class="media-body">
+							    <p style="margin-top: 5px;">Средняя оценка: <b>${data.average_rating}</b></p>
+							</div>
+	                    </div>
+	                </div>
+					<div class="card-body text-center" id="review-form-container-${bookId}">
+					        ${reviewButton}
+							${showReviews}
+					</div>
+					<div class="card-footer" id="review-list-container-${bookId}">
+
+					</div>
+	            </div>`;
+        }
+
+	    function updateContainerWithBooks(data) {
+	        $('#container').empty();
+	        if (data.length > 0) {
+	            for (let i = 0; i < data.length; i++) {
+	                const bookId = data[i].id;
+	                getDetail('authors', data[i].author).then(author => {
+	                    getDetail('genres', data[i].genre).then(genre => {
+	                        const cardHtml = getBookCard(data[i], bookId, author, genre);
+	                        $('#container').append(cardHtml);
+	                        if (currentUser) {
+	                            checkFavorite(currentUser).then(favorites => {
+	                                const isFavorite = favorites.some(book => book.id === bookId);
+	                                const favoriteButton = isFavorite ?
+	                                    `<span class="btn btn-danger mt-3 add_to_favorite" data-book-id="${bookId}">Удалить из избранного</span>` :
+	                                    `<span class="btn btn-success mt-3 add_to_favorite" data-book-id="${bookId}">Добавить в избранное</span>`;
+	                                $(`#book-${bookId}`).append(favoriteButton);
+	                            });
+	                        }
+	                    });
+	                });
+	            }
+	        } else {
+	            alert("Ничего не найдено")
+                defaultAction();
+            }
+	    }
+        $('#container').on('click', '.leave_review', function () {
+		    const bookId = $(this).data('book-id');
+            const formHtml = `
+			        <form id="review-form-${bookId}">
+			            <div class="form-group">
+			                <label for="review-text">Ваш отзыв</label>
+			                <textarea class="form-control" id="review-text-${bookId}" rows="4" placeholder="Введите ваш отзыв"></textarea>
+			            </div>
+			            <div class="form-group">
+			                <label for="review-rating">Оценка</label>
+			                <input type="number" class="form-control" id="review-rating-${bookId}" min="1" max="5" placeholder="Оценка">
+			            </div>
+			            <button type="submit" class="btn btn-primary mt-2">Оставить отзыв</button>
+			        </form>
+			    `;
+
+		    $(`#review-form-container-${bookId}`).append(formHtml);
+
+		    $(this).removeClass('leave_review');
+
+
+
+		});
+        $('#container').on('click', '.show_review', function () {
+		    const bookId = $(this).data('book-id');
+            getReviews(bookId, `review-list-container-${bookId}`)
+
+
+		});
+
+        $('#container').on('submit', 'form[id^="review-form"]', function (e) {
+			    e.preventDefault();
+			    const bookId = $(this).attr('id').split('-')[2];
+			    const reviewText = $(`#review-text-${bookId}`).val();
+			    const reviewRating = $(`#review-rating-${bookId}`).val();
+				const formData = {
+			        book: bookId,
+			        text: reviewText,
+			        rating: reviewRating
+			    };
+			    $.ajax({
+			        url: `/reviews/create/`,
+			        type: "POST",
+			        headers: {
+			            'Authorization': `Bearer ${currentUser}`
+			        },
+			        data: formData,
+			        success: function (data) {
+			            console.log('Review successfully added:', data);
+                        alert("Отзыв оставлен")
+                        getReviews(bookId, `review-list-container-${bookId}`)
+			        },
+			        error: function (error) {
+			            console.log('Error:', error);
+			        }
+			    });
+		});
+
+        function getReviews(bookId, containerId) {
+		    $.ajax({
+		        url: `/reviews/${bookId}/`,
+		        method: 'GET',
+		        dataType: 'json',
+		        success: function (reviews) {
+		            $(`#${containerId}`).empty();
+			            for (let i = 0; i < reviews.length; i++) {
+			                const review = reviews[i];
+			                const reviewHtml = `<p>Оценка: ${review.rating}, Отзыв: ${review.text}</p>`;
+			                $(`#${containerId}`).append(reviewHtml);
+			            }
+		        },
+		        error: function (error) {
+		            console.error('AJAX Error:', error);
+		        }
+		    });
+		}
+
+	    $('#genre-button').click(function () {
+	        const genre = $('#genre-input').val();
+	        const currentUser = localStorage.getItem('access_token');
+	        const baseURL = `/books/?genre=${genre}`;
+
+	        $.ajax({
+	            url: baseURL,
+	            method: 'GET',
+	            dataType: 'json',
+	            success: function (data) {
+	                $('#genre-close').click();
+	                updateContainerWithBooks(data);
+	            },
+	            error: function (error) {
+	                alert("Ничего не найдено")
+                    defaultAction();
+	            }
+	        });
+	    });
+	    $('#author-button').click(function () {
+	        const author = $('#author-input').val();
+	        const currentUser = localStorage.getItem('access_token');
+	        const baseURL = `/books/?author=${author}`;
+
+	        $.ajax({
+	            url: baseURL,
+	            method: 'GET',
+	            dataType: 'json',
+	            success: function (data) {
+	                $('#author-close').click()
+	                updateContainerWithBooks(data);
+	            },
+	            error: function (error) {
+	                alert("Ничего не найдено")
+                    defaultAction();
+	            }
+	        });
+	    });
+	    $('#date-button').click(function () {
+	        const dateMin = $('#date-min-input').val()
+		    const dateMax = $('#date-max-input').val()
+		    let baseURL = ''
+		    if (dateMin) {
+		        baseURL = `/books/?date-min=${dateMin}`
+		    } else if (dateMax) {
+		        baseURL = `/books/?date-max=${dateMax}`
+		    } if (dateMin && dateMax) {
+		        baseURL = `/books/?date-min=${dateMin}&date-max=${dateMax}`
+		    }
+	        const currentUser = localStorage.getItem('access_token');
+
+
+	        $.ajax({
+	            url: baseURL,
+	            method: 'GET',
+	            dataType: 'json',
+	            success: function (data) {
+	                $('#publish-close').click();
+	                updateContainerWithBooks(data);
+	            },
+	            error: function (error) {
+	                alert("Ничего не найдено")
+                    defaultAction();
+	            }
+	        });
+	    });
+        $('#container').on('click', '.media-body', function () {
+        const bookId = $(this).find('[data-book-id]').attr('data-book-id');
+        $.ajax({
+            url: `/books/${bookId}/`,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $('#container').empty();
+                const isDetail = true;
+                getDetail('authors', data.author).then(author => {
+	                    getDetail('genres', data.genre).then(genre => {
+	                        const cardHtml = getBookCard(data, data.id, author, genre, isDetail);
+	                        $('#container').append(cardHtml);
+	                        if (currentUser) {
+	                            checkFavorite(currentUser).then(favorites => {
+	                                const isFavorite = favorites.some(book => book.id === data.id);
+	                                const favoriteButton = isFavorite ?
+	                                    `<span class="btn btn-danger mt-3 add_to_favorite" data-book-id="${bookId}">Удалить из избранного</span>` :
+	                                    `<span class="btn btn-success mt-3 add_to_favorite" data-book-id="${bookId}">Добавить в избранное</span>`;
+	                                $(`#book-${bookId}`).append(favoriteButton);
+	                            });
+	                        }
+	                    });
+	                });
+            },
+            error: function (error) {
+                console.error('AJAX Error:', error);
+            }
+        });
+
+        });
+
+        function getDetail(detailType, detailId) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: `/${detailType}/${detailId}/`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        resolve(data.name);
+                    },
+                    error: function (error) {
+                        alert("Ничего не найдено")
+                        defaultAction();
+                        reject('');
+                    }
+                });
+            });
+        }
+        function checkFavorite(currentUser) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: `/auth/user/favorites/`,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${currentUser}`
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        resolve(data);
+                    },
+                    error: function (error) {
+                        alert("Ничего не найдено")
+                        defaultAction();
+                        reject([]);
+                    }
+                });
+            })
+        }
+        })
+
+
+
+
+
+
+
+</script>
+
+
+<script>
+	const currentUser = localStorage.getItem('access_token')
+    $('#container').on('click', '.add_to_favorite', function (e) {
+        e.preventDefault();
+		const button = $(this);
+
+        const bookId = button.data('book-id');
+        $.ajax({
+            url: `/add_to_favorite/${bookId}/`,
+            type: "POST",
+            headers: {
+                    'Authorization': `Bearer ${currentUser}`
+            },
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+			    if (data.result == 'added') {
+			        $(button).removeClass("btn-success").addClass("btn-danger").text("Удалить из избранного");
+			    } else {
+			        $(button).removeClass("btn-danger").addClass("btn-success").text("Добавить в избранное");
+			    }
+
+            },
+            error: function (data) {
+                console.log('error')
+            }
+        });
+    })
+
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
